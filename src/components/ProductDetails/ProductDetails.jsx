@@ -1,13 +1,45 @@
 import axios from 'axios'
 import style from './ProductDetails.module.css'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
+import toast from 'react-hot-toast'
+import { wishListContext } from '../../wishListContext/WishListContext'
+import { cardContext } from '../../CardContext/CardContext'
 
 export default function ProductDetails() {
+  <Helmet>
+    <title>
+      ProductDetails
+    </title>
+  </Helmet>
+   let {getApi}=useContext(wishListContext)
+    let { addToCard } = useContext(cardContext)
   let { id, category } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState(null);
-
+  async function addwishList(id){
+    let result=await getApi(id)
+    if (result.data) {
+      toast.success(result.data.message)
+    }
+    else {
+      toast.error(result.data.message)
+    }
+  }
+  async function addProductCrard(id) {
+    let result = await addToCard(id)
+    
+    
+    if (result.data) {
+      toast.success(result.data.message)
+      
+      
+    }
+    else {
+      toast.error(result.data.message)
+    }
+  }
 
   async function Getdata(id) {
 
@@ -31,7 +63,7 @@ export default function ProductDetails() {
 
   return (
     <div>
-      {product ? <div className="items-center grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-5">
+      {product ? <div className="items-center grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-5 p-4">
         <div className="img">
           <img src={product?.imageCover} alt="" />
         </div>
@@ -51,10 +83,10 @@ export default function ProductDetails() {
             <div className="addBtn my-4 flex items-center justify-between">
 
               <div className="btn text-center capitalize w-[70%] ">
-                <button className='bg-[#22db14]   capitalize py-3 px-5 rounded-lg text-white hover:bg-[#5cba5c] transition-all w-full '>+ add to card</button>
+                <button onClick={() => { addProductCrard(product._id) }} className='bg-[#22db14]   capitalize py-3 px-5 rounded-lg text-white hover:bg-[#5cba5c] transition-all w-full '>+ add to card</button>
               </div>
               <div className="icone  p-3">
-                <i className="fa-solid fa-heart text-end text-2xl  my-4  cursor-pointer hover:text-red-500 transition-all"></i>
+                <i onClick={()=>{addwishList(product._id)}} className="fa-solid fa-heart text-end text-2xl  my-4  cursor-pointer hover:text-red-500 transition-all"></i>
               </div>
             </div>
 
@@ -68,7 +100,7 @@ export default function ProductDetails() {
         <span className="sr-only">Loading...</span>
       </div>}
 
-      <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2">
+      <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 p-4">
       {relatedProducts?.length > 0 ? (
         relatedProducts?.map((product) => (
           <div key={product.id} className="overflow-hidden group cursor-pointer p-3 hover:shadow-[2px_2px_2px__2px#4fa74f60] hover:scale-[1.01] transition-all mr-3 my-3">
@@ -87,13 +119,13 @@ export default function ProductDetails() {
 
                 </div>
                 <div className="icone w-full text-end p-3">
-                  <i className="fa-solid fa-heart text-end text-2xl  my-4  cursor-pointer hover:text-red-500 transition-all"></i>
+                  <i onClick={()=>{addwishList(product._id)}} className="fa-solid fa-heart text-end text-2xl  my-4  cursor-pointer hover:text-red-500 transition-all"></i>
                 </div>
 
               </div>
             </Link>
             <div className="btn text-center capitalize w-full translate-y-[200%] group-hover:translate-y-[0] transition-all duration-300 ease-in-out">
-              <button className='bg-[#4fa74f] capitalize py-3 px-5 rounded-lg text-white hover:bg-[#438d43] transition-all  '>add to card</button>
+              <button onClick={() => { addProductCrard(product._id) }} className='bg-[#4fa74f] capitalize py-3 px-5 rounded-lg text-white hover:bg-[#438d43] transition-all  '>add to card</button>
             </div>
           </div>
         ))

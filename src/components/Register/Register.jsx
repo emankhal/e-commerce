@@ -6,8 +6,14 @@ import axios from 'axios'
 import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authContext } from '../CreatContext/CreatContext'
+import { Helmet } from 'react-helmet'
 
 export default function Register() {
+  <Helmet>
+    <title>
+      Register
+    </title>
+  </Helmet>
   let {setToken}=useContext(authContext)
   let [apiError, seterror] = useState(null)
   let [loading, setLoading] = useState(false)
@@ -54,7 +60,7 @@ export default function Register() {
   let validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required').min(3, 'Minimum three letters').max(15, 'Maximum 15 letters'),
     email: Yup.string().required('Email is required').email('Email is invalid'),
-    password: Yup.string().required('Password is required').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, 'Password must contain uppercase letter, symbols, and numbers'),
+    password: Yup.string().required('Password is required'),
     rePassword: Yup.string().required('Re-enter Password is required').oneOf([Yup.ref('password')], 'Passwords do not match'),
     phone: Yup.string().required('Phone is required').matches(/^01[0152][0-9]{8}$/, 'Phone number must be Egyptian'),
   });

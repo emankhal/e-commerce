@@ -4,8 +4,9 @@ import style from './Login.module.css'
 import * as Yup from "yup"
 import axios from 'axios'
 import { useContext, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { authContext } from '../CreatContext/CreatContext'
+import { Helmet } from 'react-helmet'
 
 export default function Login() {
   let {setToken}=useContext(authContext)
@@ -20,7 +21,7 @@ export default function Login() {
       // console.log(data);
       localStorage.setItem("userToken",data.token)
       setToken(data.token)
-      navegat("home")
+      navegat("/home")
     } catch (error) {
 
     //  if (error.response.stutus==409) {
@@ -53,7 +54,7 @@ export default function Login() {
   // }
   let validationSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email is invalid'),
-    password: Yup.string().required('Password is required').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, 'Password must contain uppercase letter, symbols, and numbers'),
+    password: Yup.string().required('Password is required'),
     
   });
   let formik = useFormik({
@@ -65,7 +66,12 @@ export default function Login() {
     , onSubmit: Login
   })
 
-  return (
+  return (<>
+    <Helmet>
+      <title>
+        Login
+      </title>
+    </Helmet>
     <div>
       <form onSubmit={formik.handleSubmit} className="md:w-full capitalize">
         {apiError && <div className="p-4 text-center font-bold mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
@@ -90,15 +96,19 @@ export default function Login() {
           {formik.errors.password}
         </div>}
        
-        <div className="btn text-end">
+        <div className="btn flex item justify-between">
           {loading ? <button type="button" className="text-white   bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-prbg-primary font-medium rounded-lg text-sm w-full sm:w-auto px-3 py-1.5 text-center dark:bg-primary dark:hover:bg-primary dark:focus:ring-prbg-primary ">
             <i className="fa-solid fa-spinner fa-spin"></i>
           </button> : <button type="submit" className="text-white   bg-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-prbg-primary font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary dark:focus:ring-prbg-primary ">Submit</button>}
-
+          <Link to={"/forgetPassword"} className="text-start p-3 ">
+        forget your password ?
+        </Link>
 
         </div>
+        
       </form>
 
     </div>
+    </>
   )
 }
